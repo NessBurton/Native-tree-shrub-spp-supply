@@ -15,6 +15,7 @@ dirOut <- paste0(wd,"data-out")
 library(tidyverse)
 library(ggplot2)
 library(stringr)
+library(tidyr)
 
 ### read in data --------------------------------------------------------------------------------------
 
@@ -47,10 +48,15 @@ as.numeric(test)
 data_area$uk.total <- as.numeric(str_replace_all(data_area$uk.total,",",""))
 data_area$private.sector.bf <- as.numeric(str_replace_all(data_area$private.sector.bf,",",""))
 
+### wrangle -------------------------------------------------------------------------------------------
+
+# convert to long format
+data_area_long <- gather(data_area, ownership, thousand.ha, private.sector.cf:uk.total, factor_key = T)
 
 ### plot it -------------------------------------------------------------------------------------------
 
-data_area %>% 
+data_area_long %>% 
+  filter(ownership != uk.total) %>% 
   ggplot()+
-  geom_point(aes(x = year, y = uk.total))
+  geom_area(aes(x = year, y = thousand.ha, fill = ownership))
 
