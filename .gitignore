@@ -3,3 +3,7 @@
 .Rhistory
 .RData
 .Ruserdata
+
+/data-raw
+/data-scratch
+/data-out
