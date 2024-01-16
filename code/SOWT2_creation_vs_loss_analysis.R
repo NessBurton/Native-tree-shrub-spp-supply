@@ -175,7 +175,7 @@ data_restock_long %>%
   #ylim(c(0,2000))+
   #xlim(c(1998,2023))+
   theme_grey()+
-  theme(plot.title = element_text(size = 20, face = "bold", margin = margin(10,0,10,0), family = "TomsHand"),
+  theme(plot.title = element_text(size = 20, face = "bold", margin = margin(10,0,10,0), family = "Lato Hairline"),
         axis.title.x = element_text(vjust = 0.5),
         axis.title.y = element_text(vjust = 0.5),
         legend.title = element_blank())
