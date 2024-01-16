@@ -49,6 +49,7 @@ as.numeric(test)
 # all good, apply to data
 data_area$uk.total <- as.numeric(str_replace_all(data_area$uk.total,",",""))
 data_area$private.sector.bf <- as.numeric(str_replace_all(data_area$private.sector.bf,",",""))
+summary(data_area)
 
 ### wrangle -------------------------------------------------------------------------------------------
 
@@ -58,7 +59,9 @@ data_area_long <- gather(data_area, ownership, thousand.ha, private.sector.cf:uk
 ### plot it -------------------------------------------------------------------------------------------
 
 data_area_long %>% 
-  filter(ownership != uk.total) %>% 
+  filter(ownership != 'uk.total') %>% # just the country data
   ggplot()+
-  geom_area(aes(x = year, y = thousand.ha, fill = ownership))
+  #geom_area(aes(x = year, y = thousand.ha, fill = ownership))
+  geom_line(aes(x = year, y = thousand.ha, colour = ownership))#+
+  #facet_grid(~ownership)
 
