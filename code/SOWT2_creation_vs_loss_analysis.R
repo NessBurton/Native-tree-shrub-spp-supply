@@ -29,6 +29,7 @@ data_area <- read.csv(paste0(dirData,"area-timeseries-UK.csv"))
 head(data_area)
 summary(data_area)
 colnames(data_area)
+# change column names
 colnames(data_area) <- c("year",
                          "private.sector.cf",
                          "public.sector.cf",
@@ -42,6 +43,7 @@ colnames(data_area) <- c("year",
 
 # strip out ","
 test <- str_replace_all(data_area$uk.total,",","")
+# convert to numeric
 as.numeric(test)
 
 # all good, apply to data
