@@ -58,10 +58,25 @@ data_area_long <- gather(data_area, ownership, thousand.ha, private.sector.cf:uk
 
 ### plot it -------------------------------------------------------------------------------------------
 
+# labels for facets
+ownership.labs <- c("Private sector - conifer", "Public sector - conifer", "Private sector - broadleaf", "Public sector - broadleaf")
+names(ownership.labs) <- c("private.sector.cf", "public.sector.cf", "private.sector.bf", "public.sector.bf")
+
+# plot
 data_area_long %>% 
   filter(ownership != 'uk.total') %>% # just the country data
   ggplot()+
   #geom_area(aes(x = year, y = thousand.ha, fill = ownership))
-  geom_line(aes(x = year, y = thousand.ha, colour = ownership))#+
-  #facet_grid(~ownership)
+  geom_area(aes(x = year, y = thousand.ha), fill = "chartreuse4")+
+  facet_wrap(~ownership, ncol = 2,
+             labeller = labeller(ownership = ownership.labs))+
+  ggtitle("Woodland creation by sector, 1998 to 2023")+
+  labs(x = "Year", y = "Area (thousand ha)")+
+  ylim(c(0,2000))+
+  #xlim(c(1998,2023))+
+  theme_grey()+
+  theme(plot.title = element_text(size = 20, face = "bold", margin = margin(10,0,10,0), family = "Avenir"),
+        axis.title.x = element_text(vjust = 0.5),
+        axis.title.y = element_text(vjust = 0.5),
+        legend.title = element_blank())
 
