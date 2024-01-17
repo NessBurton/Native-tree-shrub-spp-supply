@@ -60,23 +60,31 @@ summary(data_area)
 # convert to long format
 data_area_long <- gather(data_area, ownership, thousand.ha, private.sector.cf:uk.total, factor_key = T)
 
+# separate conifer/broadleaf into new var
+data_area_plot <- data_area_long %>% 
+  filter(ownership != "uk.total") %>% 
+  separate(ownership, into = c("sector","delete","woodland.type")) %>% 
+  mutate(woodland.type.full = ifelse(woodland.type == "cf", "conifer","broadleaf"),
+         delete = NULL)
+
 ### plot it -------------------------------------------------------------------------------------------
 
 # labels for facets
-ownership.labs <- c("Private sector - conifer", "Public sector - conifer", "Private sector - broadleaf", "Public sector - broadleaf")
-names(ownership.labs) <- c("private.sector.cf", "public.sector.cf", "private.sector.bf", "public.sector.bf")
+#ownership.labs <- c("Private sector - conifer", "Public sector - conifer", "Private sector - broadleaf", "Public sector - broadleaf")
+#names(ownership.labs) <- c("private.sector.cf", "public.sector.cf", "private.sector.bf", "public.sector.bf")
 
 # plot
-data_area_long %>% 
-  filter(ownership != 'uk.total') %>% # just the country data
+data_area_plot %>% 
+  #filter(ownership != 'uk.total') %>% # just the country data
   ggplot()+
   #geom_area(aes(x = year, y = thousand.ha, fill = ownership))
-  geom_area(aes(x = year, y = thousand.ha), fill = "chartreuse4")+
-  facet_wrap(~ownership, ncol = 2,
-             labeller = labeller(ownership = ownership.labs))+
+  #geom_area(aes(x = year, y = thousand.ha), fill = "chartreuse4")+
+  geom_area(aes(x = year, y = thousand.ha, fill = woodland.type.full), na.rm = TRUE)+
+  facet_wrap(~sector, ncol = 2)+#,
+             #labeller = labeller(ownership = ownership.labs))+
   ggtitle("Woodland area by sector, 1998 to 2023")+
   labs(x = "Year", y = "Area (thousand ha)")+
-  ylim(c(0,2000))+
+  ylim(c(0,1000))+
   #xlim(c(1998,2023))+
   theme_grey()+
   theme(plot.title = element_text(size = 20, face = "bold", margin = margin(10,0,10,0), family = "Avenir"),
