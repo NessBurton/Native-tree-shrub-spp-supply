@@ -27,6 +27,9 @@ df_opportunity <- read.csv(paste0(dirData,"Woodland_opportunity_by_local_authori
 head(df_opportunity)
 summary(df_opportunity)
 
+# add WT regions and/or counties to the dataframe based on local authority?
+# then can facet by region/county instead
+
 ### plot ---------------------------------------------------------------------------------------
 
 df_opportunity %>% 
