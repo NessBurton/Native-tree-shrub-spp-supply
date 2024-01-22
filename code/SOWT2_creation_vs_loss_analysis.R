@@ -30,6 +30,11 @@ data_area <- read.csv(paste0(dirData,"area-timeseries-UK.csv"))
 data_creation <- read.csv(paste0(dirData,"new_planting_type_ownership.csv"))
 data_restock <- read.csv(paste0(dirData,"restocking_type_ownership.csv"))
 
+# loss/change data
+# https://www.globalforestwatch.org/dashboards/country/GBR/?location=WyJjb3VudHJ5IiwiR0JSIl0%3D
+data_loss <- read.csv(paste0(dirData, "GFW_UK_tree_cover_loss_subnational.csv"))
+
+
 ### area first - have a look --------------------------------------------------------------------------
 
 head(data_area)
