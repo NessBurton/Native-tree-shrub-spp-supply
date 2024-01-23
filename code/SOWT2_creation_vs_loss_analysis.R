@@ -5,7 +5,8 @@
 
 ### working dirs --------------------------------------------------------------------------------------
 
-wd <- "~/Documents/Woodland-Trust/Data-Analysis/Project-SOWT2"
+#wd <- "~/Documents/Woodland-Trust/Data-Analysis/Project-SOWT2" # MacBook path
+wd <- "C:/Users/vbu/OneDrive - the Woodland Trust/Projects/CO&E - SoWT2/Project-SoWT2" # WT laptop path
 dirData <- paste0(wd,"/data-raw/")
 dirScratch <- paste0(wd,"/data-scratch/")
 dirOut <- paste0(wd,"data-out")
