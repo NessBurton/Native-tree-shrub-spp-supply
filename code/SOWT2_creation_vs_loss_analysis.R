@@ -203,16 +203,21 @@ colnames(data_loss)
 ### wrangle --------------------------------------------------------------------
 
 # convert to long format
-data_loss_long <- gather(data_loss, year, tc.loss.ha, tc_loss_ha_2001:tc_loss_ha_2022, factor_key = T)
+data_loss_long <- gather(data_loss, year, tc.loss.ha, tc_loss_ha_2001:tc_loss_ha_2022) #, factor_key = T)
 data_loss_long
 summary(data_loss_long)
 
-data_loss_long <- data_loss_long %>% 
-  separate(year, into = c("delete1","delete2","delete3", "year")) %>% 
+data_loss_long <- tidyr::separate(data = data_loss_long, year, into = c("delete1","delete2","delete3", "year"))
+summary(data_loss_long)
+
+#character to numeric
+data_loss_long$year <- as.numeric(data_loss_long$year)
+
 
 ### plot -----------------------------------------------------------------------
 
 data_loss_long %>% 
   ggplot()+
   geom_area(aes(year,tc.loss.ha, fill = subnational1))+
-  ggtitle("Woodland loss over time, 2001 - 2022")
+  ggtitle("Woodland loss over time, 2001 - 2022")+
+  facet_wrap(~threshold)
