@@ -16,7 +16,6 @@ dirOut <- paste0(wd,"data-out")
 library(tidyverse)
 library(ggplot2)
 library(stringr)
-library(tidyr)
 
 ### read in data ---------------------------------------------------------------
 
@@ -210,14 +209,28 @@ summary(data_loss_long)
 data_loss_long <- tidyr::separate(data = data_loss_long, year, into = c("delete1","delete2","delete3", "year"))
 summary(data_loss_long)
 
-#character to numeric
-data_loss_long$year <- as.numeric(data_loss_long$year)
-
+# use mutate, change year to numeric and remove un-needed vars
+data_loss_long <- data_loss_long %>% 
+  mutate(Country = subnational1,
+         subnational1 = NULL,
+         year = as.numeric(data_loss_long$year),
+         delete1 = NULL,
+         delete2 = NULL,
+         delete3 = NULL)
 
 ### plot -----------------------------------------------------------------------
 
+# loss is recorded for different thresholds of canopy cover, so facet by these
 data_loss_long %>% 
   ggplot()+
-  geom_area(aes(year,tc.loss.ha, fill = subnational1))+
+  geom_area(aes(year,tc.loss.ha, fill = Country))+
   ggtitle("Woodland loss over time, 2001 - 2022")+
   facet_wrap(~threshold)
+
+# or, show variation by threshold
+data_loss_long %>% 
+  ggplot()+
+  geom_boxplot(aes(as.factor(year),tc.loss.ha))+
+  ggtitle("Woodland loss over time, 2001 - 2022")+
+  facet_wrap(~Country)+
+  theme_grey()
