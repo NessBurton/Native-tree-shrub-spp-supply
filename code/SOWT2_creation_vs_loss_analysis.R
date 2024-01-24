@@ -3,7 +3,7 @@
 # author: VB
 # purpose: Explore options for presenting creation data.
 
-### working dirs --------------------------------------------------------------------------------------
+### working dirs ---------------------------------------------------------------
 
 #wd <- "~/Documents/Woodland-Trust/Data-Analysis/Project-SOWT2" # MacBook path
 wd <- "C:/Users/vbu/OneDrive - the Woodland Trust/Projects/CO&E - SoWT2/Project-SoWT2" # WT laptop path
@@ -11,14 +11,14 @@ dirData <- paste0(wd,"/data-raw/")
 dirScratch <- paste0(wd,"/data-scratch/")
 dirOut <- paste0(wd,"data-out")
 
-### libraries -----------------------------------------------------------------------------------------
+### libraries ------------------------------------------------------------------
 
 library(tidyverse)
 library(ggplot2)
 library(stringr)
 library(tidyr)
 
-### read in data --------------------------------------------------------------------------------------
+### read in data ---------------------------------------------------------------
 
 # downloaded from https://www.forestresearch.gov.uk/tools-and-resources/statistics/data-downloads/
 # on 15-01-2024
@@ -36,7 +36,7 @@ data_restock <- read.csv(paste0(dirData,"restocking_type_ownership.csv"))
 data_loss <- read.csv(paste0(dirData, "GFW_UK_tree_cover_loss_subnational.csv"))
 
 
-### area first - have a look --------------------------------------------------------------------------
+### area first - have a look ---------------------------------------------------
 
 head(data_area)
 summary(data_area)
@@ -61,7 +61,7 @@ data_area$uk.total <- as.numeric(str_replace_all(data_area$uk.total,",",""))
 data_area$private.sector.bf <- as.numeric(str_replace_all(data_area$private.sector.bf,",",""))
 summary(data_area)
 
-### wrangle -------------------------------------------------------------------------------------------
+### wrangle --------------------------------------------------------------------
 
 # convert to long format
 data_area_long <- gather(data_area, ownership, thousand.ha, private.sector.cf:uk.total, factor_key = T)
@@ -73,11 +73,11 @@ data_area_plot <- data_area_long %>%
   mutate(woodland.type.full = ifelse(woodland.type == "cf", "conifer","broadleaf"),
          delete = NULL)
 
-### plot it -------------------------------------------------------------------------------------------
+### plot it --------------------------------------------------------------------
 
 # labels for facets
-#ownership.labs <- c("Private sector - conifer", "Public sector - conifer", "Private sector - broadleaf", "Public sector - broadleaf")
-#names(ownership.labs) <- c("private.sector.cf", "public.sector.cf", "private.sector.bf", "public.sector.bf")
+ownership.labs <- c("Private sector - conifer", "Public sector - conifer", "Private sector - broadleaf", "Public sector - broadleaf")
+names(ownership.labs) <- c("private.sector.cf", "public.sector.cf", "private.sector.bf", "public.sector.bf")
 
 # plot
 data_area_plot %>% 
@@ -98,7 +98,7 @@ data_area_plot %>%
         axis.title.y = element_text(vjust = 0.5),
         legend.title = element_blank())
 
-### now creation data ------------------------------------------------------------------------------
+### now creation data ----------------------------------------------------------
 
 head(data_creation)
 summary(data_creation)
@@ -117,14 +117,14 @@ data_creation$public.sector.cf <- as.numeric(str_replace_all(data_creation$publi
 data_creation$public.sector.bf <- as.numeric(str_replace_all(data_creation$public.sector.bf,",",""))
 summary(data_creation)
 
-### wrangle ---------------------------------------------------------------------------------------
+### wrangle --------------------------------------------------------------------
 
 # convert to long format
 data_creation_long <- gather(data_creation, ownership, thousand.ha, private.sector.cf:total, factor_key = T)
 data_creation_long
 
 
-### plot ------------------------------------------------------------------------------------------
+### plot -----------------------------------------------------------------------
 # labels for facets
 ownership.labs <- c("Private sector - conifer", "Public sector - conifer", "Private sector - broadleaf", "Public sector - broadleaf")
 names(ownership.labs) <- c("private.sector.cf", "public.sector.cf", "private.sector.bf", "public.sector.bf")
@@ -147,7 +147,7 @@ data_creation_long %>%
         axis.title.y = element_text(vjust = 0.5),
         legend.title = element_blank())
 
-### now re-stock data ----------------------------------------------------------------------------
+### now re-stock data ----------------------------------------------------------
 
 head(data_restock)
 summary(data_restock)
@@ -167,14 +167,14 @@ data_restock$private.sector.bf <- as.numeric(str_replace_all(data_restock$privat
 
 summary(data_restock)
 
-### wrangle ---------------------------------------------------------------------------------------
+### wrangle --------------------------------------------------------------------
 
 # convert to long format
 data_restock_long <- gather(data_restock, ownership, thousand.ha, private.sector.cf:total, factor_key = T)
 data_restock_long
 
 
-### plot ------------------------------------------------------------------------------------------
+### plot -----------------------------------------------------------------------
 
 # plot
 data_restock_long %>% 
@@ -189,7 +189,30 @@ data_restock_long %>%
   #ylim(c(0,2000))+
   #xlim(c(1998,2023))+
   theme_grey()+
-  theme(plot.title = element_text(size = 20, face = "bold", margin = margin(10,0,10,0), family = "Lato Hairline"),
+  theme(plot.title = element_text(size = 20, face = "bold", margin = margin(10,0,10,0), family = "Arial Narrow"),
         axis.title.x = element_text(vjust = 0.5),
         axis.title.y = element_text(vjust = 0.5),
         legend.title = element_blank())
+
+### now loss data --------------------------------------------------------------
+
+head(data_loss)
+summary(data_loss)
+colnames(data_loss)
+
+### wrangle --------------------------------------------------------------------
+
+# convert to long format
+data_loss_long <- gather(data_loss, year, tc.loss.ha, tc_loss_ha_2001:tc_loss_ha_2022, factor_key = T)
+data_loss_long
+summary(data_loss_long)
+
+data_loss_long <- data_loss_long %>% 
+  separate(year, into = c("delete1","delete2","delete3", "year")) %>% 
+
+### plot -----------------------------------------------------------------------
+
+data_loss_long %>% 
+  ggplot()+
+  geom_area(aes(year,tc.loss.ha, fill = subnational1))+
+  ggtitle("Woodland loss over time, 2001 - 2022")
