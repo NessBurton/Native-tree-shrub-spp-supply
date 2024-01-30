@@ -354,16 +354,20 @@ df_all <- df_all %>%
          Conifer_Public = NULL,
          Broadleaf_Public = NULL) %>% 
   pivot_wider(., names_from = forest.stat, values_from = tot.t.ha) %>% 
-  pivot_longer(., cols = area.t.ha:creation.t.ha, names_to = "existing.created", values_to = "t.ha")
+  pivot_longer(., cols = tc.loss.ha:restock.t.ha, names_to = "forest.stat", values_to = "t.ha") %>% 
+  mutate(stat.new = ifelse(forest.stat == 'tc.loss.ha', "loss",
+                              ifelse(forest.stat == 'area.t.ha', "existing",
+                                     ifelse(forest.stat == 'creation.t.ha', "created",
+                                            ifelse(forest.stat == 'restock.t.ha', "restocked", NA)))))
 
 
 df_all %>% 
   ggplot()+
   geom_area(aes(year,t.ha, fill = country))+
-  facet_grid(existing.created~country, scales = 'free')
+  facet_grid(stat.new~country, scales = 'free')
 
 df_all %>% 
+  filter(., stat.new == 'loss' | stat.new == 'restocked') %>% 
   ggplot()+
-  geom_line(aes(year,restock.t.ha), colour = "black")+
-  geom_line(aes(year,tc.loss.ha), colour = "red")+
+  geom_line(aes(year,t.ha, colour = stat.new))+
   facet_wrap(~country)
