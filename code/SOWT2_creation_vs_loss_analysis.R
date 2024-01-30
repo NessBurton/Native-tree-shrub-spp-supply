@@ -244,4 +244,40 @@ data_loss_long %>%
 # by country
 # in thousand ha units
 
+# read in data that i wrangled by hand from forestry stats xls
 
+df_forestry_stats <- read.csv(paste0(dirScratch,"forestry_stats_2023_creation-restock_wrangled.csv"),
+                                header = TRUE)
+head(df_forestry_stats)
+summary(df_forestry_stats)
+
+### plot -----------------------------------------------------------------------
+
+df_FS_long <- df_forestry_stats %>% 
+  gather(., forest.stat, t.ha, area.t.ha:restock.t.ha) #%>% 
+  #mutate(year = as.factor(year))
+
+summary(df_FS_long)
+
+df_FS_long %>% 
+  filter(forest.stat == "area.t.ha" & country == "England" & sector == "Public") %>% 
+  ggplot()+
+  geom_area(aes(year,t.ha, fill = woodland.type))
+  
+df_FS_long %>% 
+  filter(forest.stat == "creation.t.ha") %>% 
+  ggplot()+
+  geom_area(aes(year,t.ha, fill = woodland.type), na.rm = T)+
+  facet_grid(country~sector)
+
+df_FS_long %>% 
+  filter(forest.stat == "area.t.ha") %>% 
+  ggplot()+
+  geom_area(aes(year,t.ha, fill = woodland.type), na.rm = T)+
+  facet_grid(country~sector)
+
+df_FS_long %>% 
+  filter(forest.stat == "restock.t.ha") %>% 
+  ggplot()+
+  geom_area(aes(year,t.ha, fill = woodland.type), na.rm = T)+
+  facet_grid(country~sector)
