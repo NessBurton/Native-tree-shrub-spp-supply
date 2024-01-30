@@ -89,7 +89,7 @@ data_area_plot %>%
              #labeller = labeller(ownership = ownership.labs))+
   ggtitle("Woodland area by sector, 1998 to 2023")+
   labs(x = "Year", y = "Area (thousand ha)")+
-  ylim(c(0,1000))+
+  #ylim(c(0,1000))+
   #xlim(c(1998,2023))+
   theme_grey()+
   theme(plot.title = element_text(size = 20, face = "bold", margin = margin(10,0,10,0), family = "Avenir"),
@@ -234,3 +234,14 @@ data_loss_long %>%
   ggtitle("Woodland loss over time, 2001 - 2022")+
   facet_wrap(~Country)+
   theme_grey()
+
+
+### plan -----------------------------------------------------------------------
+
+# what do I want to show?
+# essentially want to show woodland area & creation (woodland stock)
+# to woodland loss (with restock taken account of)
+# by country
+# in thousand ha units
+
+
