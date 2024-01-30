@@ -281,3 +281,77 @@ df_FS_long %>%
   ggplot()+
   geom_area(aes(year,t.ha, fill = woodland.type), na.rm = T)+
   facet_grid(country~sector)
+
+
+### now add in loss to compare -------------------------------------------------
+
+# loss/change data
+# https://www.globalforestwatch.org/dashboards/country/GBR/?location=WyJjb3VudHJ5IiwiR0JSIl0%3D
+df_loss <- read.csv(paste0(dirData, "GFW_UK_tree_cover_loss_subnational.csv"))
+
+head(df_loss)
+summary(df_loss)
+colnames(df_loss)
+
+### wrangle --------------------------------------------------------------------
+
+# convert to long format
+df_loss_long <- gather(df_loss, year, tc.loss.ha, tc_loss_ha_2001:tc_loss_ha_2022) #, factor_key = T)
+df_loss_long
+summary(df_loss_long)
+
+df_loss_long <- tidyr::separate(data = df_loss_long, year, into = c("delete1","delete2","delete3", "year"))
+summary(df_loss_long)
+
+# use mutate, change year to numeric and remove un-needed vars
+df_loss_long <- df_loss_long %>% 
+  mutate(Country = subnational1,
+         subnational1 = NULL,
+         year = as.numeric(df_loss_long$year),
+         delete1 = NULL,
+         delete2 = NULL,
+         delete3 = NULL)
+
+### plot -----------------------------------------------------------------------
+
+# loss is recorded for different thresholds of canopy cover, so facet by these
+df_loss_long %>% 
+  ggplot()+
+  geom_area(aes(year,tc.loss.ha, fill = Country))+
+  ggtitle("Woodland loss over time, 2001 - 2022")+
+  facet_wrap(~threshold)
+
+# filter to just 30% canopy cover threshold
+
+df_loss_30 <- df_loss_long %>% 
+  filter(., threshold == 30) %>% 
+  mutate(country = NULL,
+         country = Country,
+         Country = NULL)
+
+# doesn't split by woodland.type, or sector, so need to remove that from df_FS_long before joining
+df_FS_wide <- pivot_wider(df_FS_long, names_from = c(woodland.type, sector), values_from = t.ha) %>% 
+  mutate(tot.t.ha = Conifer_Private + Broadleaf_Private + Conifer_Public + Broadleaf_Public)
+
+# join & convert ha to t.ha
+
+df_all <- left_join(df_FS_wide, df_loss_30, by = c("year","country")) %>% 
+  mutate(threshold = NULL,
+         area_ha = NULL,
+         extent_2000_ha = NULL,
+         extent_2010_ha = NULL,
+         gain_2000.2020_ha = NULL,
+         tc.loss.ha = tc.loss.ha/1000)
+
+# compare area against creation, against restock, against loss
+
+# quick test
+filter(df_all, forest.stat == 'restock.t.ha')
+
+df_all <- df_all %>% 
+  mutate(Conifer_Private = NULL,
+         Broadleaf_Private = NULL,
+         Conifer_Public = NULL,
+         Broadleaf_Public = NULL) %>% 
+  pivot_wider(., names_from = forest.stat, values_from = tot.t.ha) %>% 
+  mutate(restock.minus.loss = restock.t.ha - tc.loss.ha)
