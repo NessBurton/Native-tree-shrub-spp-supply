@@ -345,9 +345,6 @@ df_all <- left_join(df_FS_wide, df_loss_30, by = c("year","country")) %>%
 
 # compare area against creation, against restock, against loss
 
-# quick test
-filter(df_all, forest.stat == 'restock.t.ha')
-
 df_all <- df_all %>% 
   mutate(Conifer_Private = NULL,
          Broadleaf_Private = NULL,
@@ -355,19 +352,27 @@ df_all <- df_all %>%
          Broadleaf_Public = NULL) %>% 
   pivot_wider(., names_from = forest.stat, values_from = tot.t.ha) %>% 
   pivot_longer(., cols = tc.loss.ha:restock.t.ha, names_to = "forest.stat", values_to = "t.ha") %>% 
+  # tidy up names
   mutate(stat.new = ifelse(forest.stat == 'tc.loss.ha', "loss",
                               ifelse(forest.stat == 'area.t.ha', "existing",
                                      ifelse(forest.stat == 'creation.t.ha', "created",
                                             ifelse(forest.stat == 'restock.t.ha', "restocked", NA)))))
 
-
+# look at existing area and creation data together
 df_all %>% 
+  filter(., stat.new == 'existing' | stat.new == 'created') %>% 
   ggplot()+
   geom_area(aes(year,t.ha, fill = country))+
   facet_grid(stat.new~country, scales = 'free')
 
+# then compare restock stats against total loss
 df_all %>% 
   filter(., stat.new == 'loss' | stat.new == 'restocked') %>% 
   ggplot()+
-  geom_line(aes(year,t.ha, colour = stat.new))+
-  facet_wrap(~country)
+  geom_line(aes(year,t.ha, colour = stat.new, linetype = stat.new))+
+  scale_linetype_manual(values = c("twodash","solid"))+
+  scale_color_manual(values=c('#999999','#E69F00'))+
+  #scale_color_brewer(palette = "Dark2")+
+  xlab("Year")+ylab("Area (thousand ha")+
+  facet_wrap(~country)+
+  theme_bw()
