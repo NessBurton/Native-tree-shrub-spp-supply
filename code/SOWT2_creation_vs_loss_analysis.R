@@ -346,4 +346,11 @@ df_all %>%
 # what I actually want to do is compare restock & creation against overall loss - 
 # and a range of potential loss due to the different data set which is calculated at different thresholds of uncertainty
 
-
+ggplot()+
+  geom_col(data = df_all %>% filter(., stat.new == 'restocked' | stat.new == 'created'),aes(year,t.ha, fill = stat.new), position = 'stack')+
+  geom_line(data = df_all %>% filter(., stat.new == 'loss'), aes(year,t.ha), colour = "black", size = 1)+
+  #scale_fill_manual(values=c('#999999','#E69F00'))+
+  scale_fill_brewer(palette = "Dark2")+
+  xlab("Year")+ylab("Area (thousand ha)")+
+  facet_wrap(~country)+
+  theme_bw()
