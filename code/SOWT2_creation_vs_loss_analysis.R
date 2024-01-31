@@ -193,47 +193,6 @@ data_restock_long %>%
         axis.title.y = element_text(vjust = 0.5),
         legend.title = element_blank())
 
-### now loss data --------------------------------------------------------------
-
-head(data_loss)
-summary(data_loss)
-colnames(data_loss)
-
-### wrangle --------------------------------------------------------------------
-
-# convert to long format
-data_loss_long <- gather(data_loss, year, tc.loss.ha, tc_loss_ha_2001:tc_loss_ha_2022) #, factor_key = T)
-data_loss_long
-summary(data_loss_long)
-
-data_loss_long <- tidyr::separate(data = data_loss_long, year, into = c("delete1","delete2","delete3", "year"))
-summary(data_loss_long)
-
-# use mutate, change year to numeric and remove un-needed vars
-data_loss_long <- data_loss_long %>% 
-  mutate(Country = subnational1,
-         subnational1 = NULL,
-         year = as.numeric(data_loss_long$year),
-         delete1 = NULL,
-         delete2 = NULL,
-         delete3 = NULL)
-
-### plot -----------------------------------------------------------------------
-
-# loss is recorded for different thresholds of canopy cover, so facet by these
-data_loss_long %>% 
-  ggplot()+
-  geom_area(aes(year,tc.loss.ha, fill = Country))+
-  ggtitle("Woodland loss over time, 2001 - 2022")+
-  facet_wrap(~threshold)
-
-# or, show variation by threshold
-data_loss_long %>% 
-  ggplot()+
-  geom_boxplot(aes(as.factor(year),tc.loss.ha))+
-  ggtitle("Woodland loss over time, 2001 - 2022")+
-  facet_wrap(~Country)+
-  theme_grey()
 
 
 ### plan -----------------------------------------------------------------------
@@ -321,8 +280,15 @@ df_loss_long %>%
   ggtitle("Woodland loss over time, 2001 - 2022")+
   facet_wrap(~threshold)
 
-# filter to just 30% canopy cover threshold
+# or, show variation by threshold
+df_loss_long %>% 
+  ggplot()+
+  geom_boxplot(aes(as.factor(year),tc.loss.ha))+
+  ggtitle("Woodland loss over time, 2001 - 2022")+
+  facet_wrap(~Country)+
+  theme_grey()
 
+# filter to just 30% canopy cover threshold
 df_loss_30 <- df_loss_long %>% 
   filter(., threshold == 30) %>% 
   mutate(country = NULL,
@@ -373,6 +339,11 @@ df_all %>%
   scale_linetype_manual(values = c("twodash","solid"))+
   scale_color_manual(values=c('#999999','#E69F00'))+
   #scale_color_brewer(palette = "Dark2")+
-  xlab("Year")+ylab("Area (thousand ha")+
+  xlab("Year")+ylab("Area (thousand ha)")+
   facet_wrap(~country)+
   theme_bw()
+
+# what I actually want to do is compare restock & creation against overall loss - 
+# and a range of potential loss due to the different data set which is calculated at different thresholds of uncertainty
+
+
