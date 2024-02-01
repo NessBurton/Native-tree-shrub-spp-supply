@@ -288,6 +288,13 @@ df_loss_long %>%
   facet_wrap(~Country)+
   theme_grey()
 
+df_loss_long %>% 
+  ggplot()+
+  geom_line(aes(year,tc.loss.ha, colour = as.factor(threshold)))+
+  ggtitle("Woodland loss over time, 2001 - 2022")+
+  facet_wrap(~Country)+
+  theme_grey()
+
 # filter to just 30% canopy cover threshold
 df_loss_30 <- df_loss_long %>% 
   filter(., threshold == 30) %>% 
