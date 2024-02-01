@@ -352,5 +352,14 @@ ggplot()+
   #scale_fill_manual(values=c('#999999','#E69F00'))+
   scale_fill_brewer(palette = "Dark2")+
   xlab("Year")+ylab("Area (thousand ha)")+
+  ggtitle("Area of woodland restocked & created, vs. total loss")+
   facet_wrap(~country)+
-  theme_bw()
+  theme_bw()+
+  theme(plot.title = element_text(size = 20, face = "bold", margin = margin(10,0,10,0), family = "Calibri"),
+        axis.title.x = element_text(vjust = 0.5),
+        axis.title.y = element_text(vjust = 0.5),
+        legend.title = element_blank())
+
+# now I want to show the range of potential loss, not just the 30% canopy cover threshold.
+
+# also add in lines to illustrate annual creation target per country? or do a separate plot for that
