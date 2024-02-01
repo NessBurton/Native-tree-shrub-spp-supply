@@ -307,7 +307,7 @@ df_FS_wide <- pivot_wider(df_FS_long, names_from = c(woodland.type, sector), val
   mutate(tot.t.ha = Conifer_Private + Broadleaf_Private + Conifer_Public + Broadleaf_Public)
 
 # join & convert ha to t.ha
-
+# it's to do with the join type here - sort tomorrow
 df_all <- left_join(df_FS_wide, df_loss_long, by = c("year","country")) %>% 
   mutate(#threshold = NULL,
          area_ha = NULL,
@@ -337,6 +337,9 @@ df_all %>%
   ggplot()+
   geom_area(aes(year,t.ha, fill = country))+
   facet_grid(stat.new~country, scales = 'free')
+
+# filter 
+test <- filter(df_all, stat.new == "loss")
 
 # then compare restock stats against total loss
 df_all %>% 
