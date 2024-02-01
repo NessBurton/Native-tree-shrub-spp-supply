@@ -296,11 +296,11 @@ df_loss_long %>%
   theme_grey()
 
 # filter to just 30% canopy cover threshold
-df_loss_30 <- df_loss_long %>% 
-  filter(., threshold == 30) %>% 
-  mutate(country = NULL,
-         country = Country,
-         Country = NULL)
+#df_loss_30 <- df_loss_long %>% 
+  #filter(., threshold == 30) %>% 
+  #mutate(country = NULL,
+         #country = Country,
+         #Country = NULL)
 
 # doesn't split by woodland.type, or sector, so need to remove that from df_FS_long before joining
 df_FS_wide <- pivot_wider(df_FS_long, names_from = c(woodland.type, sector), values_from = t.ha) %>% 
@@ -308,8 +308,8 @@ df_FS_wide <- pivot_wider(df_FS_long, names_from = c(woodland.type, sector), val
 
 # join & convert ha to t.ha
 
-df_all <- left_join(df_FS_wide, df_loss_30, by = c("year","country")) %>% 
-  mutate(threshold = NULL,
+df_all <- left_join(df_FS_wide, df_loss_long, by = c("year","country")) %>% 
+  mutate(#threshold = NULL,
          area_ha = NULL,
          extent_2000_ha = NULL,
          extent_2010_ha = NULL,
@@ -324,7 +324,7 @@ df_all <- df_all %>%
          Conifer_Public = NULL,
          Broadleaf_Public = NULL) %>% 
   pivot_wider(., names_from = forest.stat, values_from = tot.t.ha) %>% 
-  pivot_longer(., cols = tc.loss.ha:restock.t.ha, names_to = "forest.stat", values_to = "t.ha") %>% 
+  pivot_longer(., cols = c('tc.loss.ha','restock.t.ha','area.t.ha','creation.t.ha'), names_to = "forest.stat", values_to = "t.ha") %>% 
   # tidy up names
   mutate(stat.new = ifelse(forest.stat == 'tc.loss.ha', "loss",
                               ifelse(forest.stat == 'area.t.ha', "existing",
