@@ -302,13 +302,13 @@ df_loss_long %>%
          #country = Country,
          #Country = NULL)
 
-# doesn't split by woodland.type, or sector, so need to remove that from df_FS_long before joining
+# loss data doesn't split by woodland.type, or sector, so need to remove these distinctions from df_FS_long before joining
 df_FS_wide <- pivot_wider(df_FS_long, names_from = c(woodland.type, sector), values_from = t.ha) %>% 
   mutate(tot.t.ha = Conifer_Private + Broadleaf_Private + Conifer_Public + Broadleaf_Public)
 
 # join & convert ha to t.ha
 # it's to do with the join type here - sort tomorrow
-df_all <- left_join(df_FS_wide, df_loss_long, by = c("year","country")) %>% 
+df_all <- full_join(df_FS_wide, df_loss_long, by = c("year","country")) %>% 
   mutate(#threshold = NULL,
          area_ha = NULL,
          extent_2000_ha = NULL,
