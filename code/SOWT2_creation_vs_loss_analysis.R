@@ -218,28 +218,46 @@ df_FS_long <- df_forestry_stats %>%
 
 summary(df_FS_long)
 
-df_FS_long %>% 
-  filter(forest.stat == "area.t.ha" & country == "England" & sector == "Public") %>% 
-  ggplot()+
-  geom_area(aes(year,t.ha, fill = woodland.type))
-  
-df_FS_long %>% 
-  filter(forest.stat == "creation.t.ha") %>% 
-  ggplot()+
-  geom_area(aes(year,t.ha, fill = woodland.type), na.rm = T)+
-  facet_grid(country~sector)
+# df_FS_long %>% 
+#   filter(forest.stat == "area.t.ha" & country == "England" & sector == "Public") %>% 
+#   ggplot()+
+#   geom_area(aes(year,t.ha, fill = woodland.type))
 
-df_FS_long %>% 
-  filter(forest.stat == "area.t.ha") %>% 
-  ggplot()+
-  geom_area(aes(year,t.ha, fill = woodland.type), na.rm = T)+
-  facet_grid(country~sector)
+png(paste0(wd,"/figures/area-by-country.png"), width = 850, height = 650)
+(p1 <- df_FS_long %>% 
+    filter(forest.stat == "area.t.ha") %>% 
+    ggplot()+
+    geom_area(aes(year,t.ha, fill = woodland.type), na.rm = T)+
+    scale_fill_manual(values = c("#AFFACE","#497A5E"))+
+    facet_grid(country~sector)+
+    theme_light()+
+    ylab("Woodland area (thousand ha)")+xlab("Year")+
+    labs(fill="Woodland type"))
+dev.off()
 
-df_FS_long %>% 
-  filter(forest.stat == "restock.t.ha") %>% 
-  ggplot()+
-  geom_area(aes(year,t.ha, fill = woodland.type), na.rm = T)+
-  facet_grid(country~sector)
+png(paste0(wd,"/figures/creation-by-country.png"), width = 850, height = 650)
+(p2 <- df_FS_long %>% 
+    filter(forest.stat == "creation.t.ha") %>% 
+    ggplot()+
+    geom_area(aes(year,t.ha, fill = woodland.type), na.rm = T)+
+    scale_fill_manual(values = c("#AFFACE","#497A5E"))+
+    facet_grid(country~sector)+
+    theme_light()+
+    ylab("Woodland creation (thousand ha)")+xlab("Year")+
+    labs(fill="Woodland type"))
+dev.off()
+
+png(paste0(wd,"/figures/restock-by-country.png"), width = 850, height = 650)
+(p3 <- df_FS_long %>% 
+    filter(forest.stat == "restock.t.ha") %>% 
+    ggplot()+
+    geom_area(aes(year,t.ha, fill = woodland.type), na.rm = T)+
+    scale_fill_manual(values = c("#AFFACE","#497A5E"))+
+    facet_grid(country~sector)+
+    theme_light()+
+    ylab("Area restocked (thousand ha)")+xlab("Year")+
+    labs(fill="Woodland type"))
+dev.off()
 
 
 ### now add in loss to compare -------------------------------------------------
