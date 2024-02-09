@@ -292,26 +292,37 @@ df_loss_long <- df_loss_long %>%
 ### plot -----------------------------------------------------------------------
 
 # loss is recorded for different thresholds of canopy cover, so facet by these
-df_loss_long %>% 
-  ggplot()+
-  geom_area(aes(year,tc.loss.ha, fill = Country))+
-  ggtitle("Woodland loss over time, 2001 - 2022")+
-  facet_wrap(~threshold)
+(p4 <- df_loss_long %>% 
+   ggplot()+
+   geom_area(aes(year,tc.loss.ha, fill = Country))+
+   scale_fill_manual(values = c("#FA7470","#73FA70","#F170FA","#438442"))+
+   ggtitle("Woodland loss over time, 2001 - 2022")+
+   facet_wrap(~threshold)+
+   theme_light())
+
+png(paste0(wd,"/figures/loss-variation-by-canopy-threshold.png"), width = 850, height = 650)
+p4
+dev.off()
 
 # or, show variation by threshold
-df_loss_long %>% 
-  ggplot()+
-  geom_boxplot(aes(as.factor(year),tc.loss.ha))+
-  ggtitle("Woodland loss over time, 2001 - 2022")+
-  facet_wrap(~Country)+
-  theme_grey()
+# df_loss_long %>% 
+#   ggplot()+
+#   geom_boxplot(aes(as.factor(year),tc.loss.ha))+
+#   ggtitle("Woodland loss over time, 2001 - 2022")+
+#   facet_wrap(~Country)+
+#   theme_grey()
 
-df_loss_long %>% 
+(p5 <- df_loss_long %>% 
   ggplot()+
   geom_line(aes(year,tc.loss.ha, colour = as.factor(threshold)))+
   ggtitle("Woodland loss over time, 2001 - 2022")+
   facet_wrap(~Country)+
-  theme_grey()
+  labs(colour = "Canopy threshold")+
+  theme_light())
+
+png(paste0(wd,"/figures/loss-variation-by-canopy-threshold-v2.png"), width = 850, height = 650)
+p5
+dev.off()
 
 # filter to just 30% canopy cover threshold
 #df_loss_30 <- df_loss_long %>% 
