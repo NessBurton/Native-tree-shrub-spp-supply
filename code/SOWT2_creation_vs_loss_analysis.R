@@ -232,7 +232,16 @@ png(paste0(wd,"/figures/area-by-country.png"), width = 850, height = 650)
     facet_grid(country~sector)+
     theme_light()+
     ylab("Woodland area (thousand ha)")+xlab("Year")+
-    labs(fill="Woodland type"))
+    labs(fill="Woodland type")+
+    theme(title = element_text(size = 22, face = "bold", family = "Calibri"),
+          axis.title.x = element_blank(),
+          axis.title.y = element_text(size = 20, face = "bold", margin = margin(r = 15)),
+          axis.text.y = element_text(size = 18),
+          axis.text.x = element_text(size = 18),
+          axis.ticks.x = element_blank(),
+          legend.title = element_text(size = 20, face = "bold"),
+          legend.text = element_text(size = 18),
+          strip.text = element_text(face="bold", size = 12)))
 dev.off()
 
 png(paste0(wd,"/figures/creation-by-country.png"), width = 850, height = 650)
@@ -244,7 +253,16 @@ png(paste0(wd,"/figures/creation-by-country.png"), width = 850, height = 650)
     facet_grid(country~sector)+
     theme_light()+
     ylab("Woodland creation (thousand ha)")+xlab("Year")+
-    labs(fill="Woodland type"))
+    labs(fill="Woodland type")+
+    theme(title = element_text(size = 22, face = "bold", family = "Calibri"),
+          axis.title.x = element_blank(),
+          axis.title.y = element_text(size = 20, face = "bold", margin = margin(r = 15)),
+          axis.text.y = element_text(size = 18),
+          axis.text.x = element_text(size = 18),
+          axis.ticks.x = element_blank(),
+          legend.title = element_text(size = 20, face = "bold"),
+          legend.text = element_text(size = 18),
+          strip.text = element_text(face="bold", size = 12)))
 dev.off()
 
 png(paste0(wd,"/figures/restock-by-country.png"), width = 850, height = 650)
@@ -256,7 +274,16 @@ png(paste0(wd,"/figures/restock-by-country.png"), width = 850, height = 650)
     facet_grid(country~sector)+
     theme_light()+
     ylab("Area restocked (thousand ha)")+xlab("Year")+
-    labs(fill="Woodland type"))
+    labs(fill="Woodland type")+
+    theme(title = element_text(size = 22, face = "bold", family = "Calibri"),
+          axis.title.x = element_blank(),
+          axis.title.y = element_text(size = 20, face = "bold", margin = margin(r = 15)),
+          axis.text.y = element_text(size = 18),
+          axis.text.x = element_text(size = 18),
+          axis.ticks.x = element_blank(),
+          legend.title = element_text(size = 20, face = "bold"),
+          legend.text = element_text(size = 18),
+          strip.text = element_text(face="bold", size = 12)))
 dev.off()
 
 
@@ -298,7 +325,16 @@ df_loss_long <- df_loss_long %>%
    scale_fill_manual(values = c("#FA7470","#73FA70","#F170FA","#438442"))+
    ggtitle("Woodland loss over time, 2001 - 2022")+
    facet_wrap(~threshold)+
-   theme_light())
+   theme_light()+
+   theme(title = element_text(size = 22, face = "bold", family = "Calibri"),
+         axis.title.x = element_blank(),
+         axis.title.y = element_text(size = 20, face = "bold", margin = margin(r = 15)),
+         axis.text.y = element_text(size = 18),
+         axis.text.x = element_text(size = 18),
+         axis.ticks.x = element_blank(),
+         legend.title = element_text(size = 20, face = "bold"),
+         legend.text = element_text(size = 18),
+         strip.text = element_text(face="bold", size = 12)))
 
 png(paste0(wd,"/figures/loss-variation-by-canopy-threshold.png"), width = 850, height = 650)
 p4
@@ -313,12 +349,21 @@ dev.off()
 #   theme_grey()
 
 (p5 <- df_loss_long %>% 
-  ggplot()+
-  geom_line(aes(year,tc.loss.ha, colour = as.factor(threshold)))+
-  ggtitle("Woodland loss over time, 2001 - 2022")+
-  facet_wrap(~Country)+
-  labs(colour = "Canopy threshold")+
-  theme_light())
+    ggplot()+
+    geom_line(aes(year,tc.loss.ha, colour = as.factor(threshold)))+
+    ggtitle("Woodland loss over time, 2001 - 2022")+
+    facet_wrap(~Country)+
+    labs(colour = "Canopy threshold")+
+    theme_light()+
+    theme(title = element_text(size = 22, face = "bold", family = "Calibri"),
+          axis.title.x = element_blank(),
+          axis.title.y = element_text(size = 20, face = "bold", margin = margin(r = 15)),
+          axis.text.y = element_text(size = 18),
+          axis.text.x = element_text(size = 18),
+          axis.ticks.x = element_blank(),
+          legend.title = element_text(size = 20, face = "bold"),
+          legend.text = element_text(size = 18),
+          strip.text = element_text(face="bold", size = 12)))
 
 png(paste0(wd,"/figures/loss-variation-by-canopy-threshold-v2.png"), width = 850, height = 650)
 p5
