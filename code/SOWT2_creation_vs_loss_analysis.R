@@ -379,71 +379,51 @@ dev.off()
 # loss data doesn't split by woodland.type, or sector, so need to remove these distinctions from df_FS_long before joining
 df_FS_wide <- pivot_wider(df_FS_long, names_from = c(woodland.type, sector), values_from = t.ha) %>% 
   mutate(tot.t.ha = Conifer_Private + Broadleaf_Private + Conifer_Public + Broadleaf_Public)
+summary(df_FS_wide)
 
-# join & convert ha to t.ha
-# it's to do with the join type here - sort tomorrow
-df_all <- full_join(df_FS_wide, df_loss_long, by = c("year","country")) %>% 
-  mutate(#threshold = NULL,
-         area_ha = NULL,
-         extent_2000_ha = NULL,
-         extent_2010_ha = NULL,
-         gain_2000.2020_ha = NULL,
-         tc.loss.ha = tc.loss.ha/1000)
+# I want to show the range of potential loss, not just the 30% canopy cover threshold.
 
-# compare area against creation, against restock, against loss
+# just creation and restock
+df_FS_filter <- df_FS_wide %>% filter(., forest.stat == 'restock.t.ha' | forest.stat == 'creation.t.ha')
+summary(df_FS_filter)
 
-df_all <- df_all %>% 
-  mutate(Conifer_Private = NULL,
-         Broadleaf_Private = NULL,
-         Conifer_Public = NULL,
-         Broadleaf_Public = NULL) %>% 
-  pivot_wider(., names_from = forest.stat, values_from = tot.t.ha) %>% 
-  pivot_longer(., cols = c('tc.loss.ha','restock.t.ha','area.t.ha','creation.t.ha'), names_to = "forest.stat", values_to = "t.ha") %>% 
-  # tidy up names
-  mutate(stat.new = ifelse(forest.stat == 'tc.loss.ha', "loss",
-                              ifelse(forest.stat == 'area.t.ha', "existing",
-                                     ifelse(forest.stat == 'creation.t.ha', "created",
-                                            ifelse(forest.stat == 'restock.t.ha', "restocked", NA)))))
+# and convert tree loss to thousand ha
+df_loss_long <- df_loss_long %>% mutate(loss.t.ha = tc.loss.ha/1000)
 
-# look at existing area and creation data together
-df_all %>% 
-  filter(., stat.new == 'existing' | stat.new == 'created') %>% 
+# ggplot()+
+#   geom_col(data = df_FS_filter, aes(year,tot.t.ha, fill = forest.stat), na.rm = T, position = 'stack')+
+#   scale_fill_manual(values=c('#999999','#E69F00'))+
+#   facet_wrap(~country)+
+#   geom_line(data = df_loss_long, aes(year, loss.t.ha, colour = as.factor(threshold)))+
+#   facet_wrap(~Country)
+# doesn't quite work, plots facet doesn't work for both dataframes at the same time... whyyy?
+
+# join
+df_FS_select <- df_FS_wide %>% select(year,forest.stat,tot.t.ha,country)
+df_loss_select <- df_loss_long %>% select(year,threshold,loss.t.ha, Country) %>% mutate(country = Country, Country = NULL)
+df_join <- left_join(df_FS_select, df_loss_select, by = c('year','country'))
+
+df_join_select <- df_join %>% 
+  filter(forest.stat == 'restock.t.ha' | forest.stat == 'creation.t.ha') 
+
+df_join_select %>% 
   ggplot()+
-  geom_area(aes(year,t.ha, fill = country))+
-  facet_grid(stat.new~country, scales = 'free')
-
-# filter 
-test <- filter(df_all, stat.new == "loss")
-
-# then compare restock stats against total loss
-df_all %>% 
-  filter(., stat.new == 'loss' | stat.new == 'restocked') %>% 
-  ggplot()+
-  geom_line(aes(year,t.ha, colour = stat.new, linetype = stat.new))+
-  scale_linetype_manual(values = c("twodash","solid"))+
-  scale_color_manual(values=c('#999999','#E69F00'))+
-  #scale_color_brewer(palette = "Dark2")+
-  xlab("Year")+ylab("Area (thousand ha)")+
+  geom_col(aes(year,tot.t.ha, fill = forest.stat), na.rm = T, position = 'stack')+
   facet_wrap(~country)+
-  theme_bw()
+  geom_line(aes(year,loss.t.ha, colour = as.factor(threshold)))+
+  scale_fill_manual(values=c('#999999','#E69F00'))+
+  theme_light()+
+  theme(title = element_text(size = 22, face = "bold", family = "Calibri"),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size = 20, face = "bold", margin = margin(r = 15)),
+        axis.text.y = element_text(size = 18),
+        axis.text.x = element_text(size = 18),
+        axis.ticks.x = element_blank(),
+        legend.title = element_text(size = 20, face = "bold"),
+        legend.text = element_text(size = 18),
+        strip.text = element_text(face="bold", size = 12))
 
-# what I actually want to do is compare restock & creation against overall loss - 
-# and a range of potential loss due to the different data set which is calculated at different thresholds of uncertainty
-
-ggplot()+
-  geom_col(data = df_all %>% filter(., stat.new == 'restocked' | stat.new == 'created'),aes(year,t.ha, fill = stat.new), position = 'stack')+
-  geom_line(data = df_all %>% filter(., stat.new == 'loss'), aes(year,t.ha), colour = "black", size = 1)+
-  #scale_fill_manual(values=c('#999999','#E69F00'))+
-  scale_fill_brewer(palette = "Dark2")+
-  xlab("Year")+ylab("Area (thousand ha)")+
-  ggtitle("Area of woodland restocked & created, vs. total loss")+
-  facet_wrap(~country)+
-  theme_bw()+
-  theme(plot.title = element_text(size = 20, face = "bold", margin = margin(10,0,10,0), family = "Calibri"),
-        axis.title.x = element_text(vjust = 0.5),
-        axis.title.y = element_text(vjust = 0.5),
-        legend.title = element_blank())
-
-# now I want to show the range of potential loss, not just the 30% canopy cover threshold.
+# annual values seem too high
+max(df_join_select %>% filter(country == "England" & forest.stat == "creation.t.ha") %>% select(tot.t.ha), na.rm = TRUE)
 
 # also add in lines to illustrate annual creation target per country? or do a separate plot for that
