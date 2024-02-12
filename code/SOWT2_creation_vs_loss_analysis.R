@@ -410,14 +410,16 @@ df_join <- right_join(df_FS_select, df_loss_select, by = c('year','country'), re
 df_join_select <- df_join %>% 
   filter(forest.stat == 'restock.t.ha' | forest.stat == 'creation.t.ha') 
 
-df_join_select %>% 
-  ggplot()+
-  geom_col(aes(year,tot.t.ha, fill = forest.stat), na.rm = T, position = 'stack')+
-  facet_wrap(~country)+
-  geom_line(aes(year,loss.t.ha, colour = as.factor(threshold)))+
-  scale_fill_manual(values=c('#999999','#E69F00'))+
-  theme_light()+
-  theme(title = element_text(size = 22, face = "bold", family = "Calibri"),
+(p6 <- df_join_select %>% 
+    ggplot()+
+    geom_col(aes(year,tot.t.ha, fill = forest.stat), na.rm = T, position = 'stack')+
+    facet_wrap(~country)+
+    geom_line(aes(year,loss.t.ha, colour = as.factor(threshold)))+
+    scale_fill_manual(values=c('#999999','#E69F00'))+
+    scale_colour_brewer(palette = 'Purples')+
+    ylab("Area (thousand ha)")+
+    theme_light()+
+    theme(title = element_text(size = 22, face = "bold", family = "Calibri"),
         axis.title.x = element_blank(),
         axis.title.y = element_text(size = 20, face = "bold", margin = margin(r = 15)),
         axis.text.y = element_text(size = 18),
@@ -425,11 +427,15 @@ df_join_select %>%
         axis.ticks.x = element_blank(),
         legend.title = element_text(size = 20, face = "bold"),
         legend.text = element_text(size = 18),
-        strip.text = element_text(face="bold", size = 12))
+        strip.text = element_text(face="bold", size = 14)))
 
 # annual values seem too high
 # max(df_join_select %>% filter(country == "England" & forest.stat == "creation.t.ha") %>% select(tot.t.ha), na.rm = TRUE)
 # df_join_select$tot.t.ha
 # it's because Fstats are repeated for each loss threshold value - happens in the join.
+
+png(paste0(wd,"/figures/creation_restock_vs_loss.png"), width = 850, height = 650)
+p6
+dev.off()
 
 # also add in lines to illustrate annual creation target per country? or do a separate plot for that
