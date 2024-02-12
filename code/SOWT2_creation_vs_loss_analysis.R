@@ -378,7 +378,9 @@ dev.off()
 
 # loss data doesn't split by woodland.type, or sector, so need to remove these distinctions from df_FS_long before joining
 df_FS_wide <- pivot_wider(df_FS_long, names_from = c(woodland.type, sector), values_from = t.ha) %>% 
-  mutate(tot.t.ha = Conifer_Private + Broadleaf_Private + Conifer_Public + Broadleaf_Public)
+  rowwise() %>% 
+  mutate(tot.t.ha = sum(Conifer_Private, Broadleaf_Private, Conifer_Public,Broadleaf_Public, na.rm = TRUE))
+
 summary(df_FS_wide)
 
 # I want to show the range of potential loss, not just the 30% canopy cover threshold.
@@ -403,7 +405,7 @@ df_FS_select <- df_FS_wide %>% select(year,forest.stat,tot.t.ha,country)
 df_loss_select <- df_loss_long %>% select(year,threshold,loss.t.ha, Country) %>% mutate(country = Country, Country = NULL)
 df_join <- right_join(df_FS_select, df_loss_select, by = c('year','country'), relationship = 'many-to-many') %>% #distinct()
   #cheeky workaround 
-  mutate(tot.t.ha = ifelse(threshold == 0, tot.t.ha, NA))
+  mutate(tot.t.ha = ifelse(threshold == 0 | is.na(threshold), tot.t.ha, NA))
 
 df_join_select <- df_join %>% 
   filter(forest.stat == 'restock.t.ha' | forest.stat == 'creation.t.ha') 
@@ -426,8 +428,8 @@ df_join_select %>%
         strip.text = element_text(face="bold", size = 12))
 
 # annual values seem too high
-max(df_join_select %>% filter(country == "England" & forest.stat == "creation.t.ha") %>% select(tot.t.ha), na.rm = TRUE)
-df_join_select$tot.t.ha
+# max(df_join_select %>% filter(country == "England" & forest.stat == "creation.t.ha") %>% select(tot.t.ha), na.rm = TRUE)
+# df_join_select$tot.t.ha
 # it's because Fstats are repeated for each loss threshold value - happens in the join.
 
 # also add in lines to illustrate annual creation target per country? or do a separate plot for that
