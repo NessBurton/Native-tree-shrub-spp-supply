@@ -401,7 +401,9 @@ df_loss_long <- df_loss_long %>% mutate(loss.t.ha = tc.loss.ha/1000)
 # join
 df_FS_select <- df_FS_wide %>% select(year,forest.stat,tot.t.ha,country)
 df_loss_select <- df_loss_long %>% select(year,threshold,loss.t.ha, Country) %>% mutate(country = Country, Country = NULL)
-df_join <- right_join(df_FS_select, df_loss_select, by = c('year','country'), multiple = 'first')
+df_join <- right_join(df_FS_select, df_loss_select, by = c('year','country'), relationship = 'many-to-many') %>% #distinct()
+  #cheeky workaround 
+  mutate(tot.t.ha = ifelse(threshold == 0, tot.t.ha, NA))
 
 df_join_select <- df_join %>% 
   filter(forest.stat == 'restock.t.ha' | forest.stat == 'creation.t.ha') 
