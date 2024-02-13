@@ -446,9 +446,23 @@ palette_manual <- c('0' = "#D6D591",
     geom_col(aes(year,tot.t.ha, fill = forest.stat), na.rm = T, position = 'stack')+
     scale_fill_manual(values=c('#1FAB91','#C85328'), labels = c("Woodland created", "Woodland restocked"))+
     geom_line(aes(year,loss.t.ha, colour = as.factor(threshold),  size = as.factor(threshold)))+
-    scale_colour_manual(values = palette_manual)+
+    scale_colour_manual(values = palette_manual, labels = c("0% canopy threshold",
+                                                            "10% canopy threshold",
+                                                            "15% canopy threshold",
+                                                            "20% canopy threshold",
+                                                            "25% canopy threshold",
+                                                            "30% canopy threshold",
+                                                            "50% canopy threshold",
+                                                            "75% canopy threshold"))+
     #scale_linetype_manual(values = type_manual) +
-    scale_size_manual(values = size_manual)+
+    scale_size_manual(values = size_manual, labels = c("0% canopy threshold",
+                                                       "10% canopy threshold",
+                                                       "15% canopy threshold",
+                                                       "20% canopy threshold",
+                                                       "25% canopy threshold",
+                                                       "30% canopy threshold",
+                                                       "50% canopy threshold",
+                                                       "75% canopy threshold"))+
     facet_wrap(~country)+
     ylab("Area (thousand ha)")+
     labs(fill = "Forestry Statistic", colour = "Woodland loss", size = "Woodland loss")+
@@ -461,7 +475,7 @@ palette_manual <- c('0' = "#D6D591",
           axis.text.x = element_text(size = 18,  family = "Rockwell"),
           axis.ticks.x = element_blank(),
           legend.title = element_text(size = 20, face = "bold", family = "Rockwell"),
-          legend.text = element_text(size = 18,  family = "Rockwell"),
+          legend.text = element_text(size = 16,  family = "Rockwell"),
           strip.text = element_text(face="bold", size = 14,  family = "Rockwell")))
 
 # annual values seem too high
