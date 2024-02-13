@@ -412,16 +412,50 @@ df_join <- right_join(df_FS_select, df_loss_select, by = c('year','country'), re
 df_join_select <- df_join %>% 
   filter(forest.stat == 'restock.t.ha' | forest.stat == 'creation.t.ha') 
 
+# type_manual <- c('0' = "dashed",
+#                  '10' = "dashed",
+#                  '15' = "dashed",
+#                  '20' = "solid",
+#                  '25' = "dashed",
+#                  '30' = "dashed",
+#                  '50' = "dashed",
+#                  '75' = "dashed")
+
+size_manual <- c('0' = 1,
+                 '10' = 1,
+                 '15' = 1,
+                 '20' = 2,
+                 '25' = 1,
+                 '30' = 1,
+                 '50' = 1,
+                 '75' = 1)
+
+
+palette_manual <- c('0' = "#D6D591",
+                    '10' = "#D6D591",
+                    '15' = "#D6D591",
+                    '20' = "#D5D730",
+                    '25' = "#D6D591",
+                    '30' = "#D6D591",
+                    '50' = "#D6D591",
+                    '75' = "#D6D591")
+
 (p6 <- df_join_select %>% 
+    #mutate(threshold = as.factor(threshold))+
     ggplot()+
     geom_col(aes(year,tot.t.ha, fill = forest.stat), na.rm = T, position = 'stack')+
+    scale_fill_manual(values=c('#1FAB91','#C85328'), labels = c("Woodland created", "Woodland restocked"))+
+    geom_line(aes(year,loss.t.ha, colour = as.factor(threshold),  size = as.factor(threshold)))+
+    scale_colour_manual(values = palette_manual)+
+    #scale_linetype_manual(values = type_manual) +
+    scale_size_manual(values = size_manual)+
     facet_wrap(~country)+
-    geom_line(aes(year,loss.t.ha, colour = as.factor(threshold)))+
-    scale_fill_manual(values=c('#999999','#E69F00'))+
-    scale_colour_brewer(palette = 'Purples')+
     ylab("Area (thousand ha)")+
+    labs(fill = "Forestry Statistic", colour = "Woodland loss", size = "Woodland loss")+
     theme_light()+
     theme(axis.title.x = element_blank(),
+          panel.grid.major = element_blank(), 
+          #panel.grid.minor = element_blank(),
           axis.title.y = element_text(size = 20, face = "bold", margin = margin(r = 15), family = "Rockwell" ),
           axis.text.y = element_text(size = 18,  family = "Rockwell"),
           axis.text.x = element_text(size = 18,  family = "Rockwell"),
