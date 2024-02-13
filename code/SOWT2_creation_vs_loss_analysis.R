@@ -16,6 +16,8 @@ dirOut <- paste0(wd,"data-out")
 library(tidyverse)
 library(ggplot2)
 library(stringr)
+library(extrafont)
+extrafont::loadfonts()
 
 ### read in data ---------------------------------------------------------------
 
@@ -419,15 +421,14 @@ df_join_select <- df_join %>%
     scale_colour_brewer(palette = 'Purples')+
     ylab("Area (thousand ha)")+
     theme_light()+
-    theme(title = element_text(size = 22, face = "bold", family = "Calibri"),
-        axis.title.x = element_blank(),
-        axis.title.y = element_text(size = 20, face = "bold", margin = margin(r = 15)),
-        axis.text.y = element_text(size = 18),
-        axis.text.x = element_text(size = 18),
-        axis.ticks.x = element_blank(),
-        legend.title = element_text(size = 20, face = "bold"),
-        legend.text = element_text(size = 18),
-        strip.text = element_text(face="bold", size = 14)))
+    theme(axis.title.x = element_blank(),
+          axis.title.y = element_text(size = 20, face = "bold", margin = margin(r = 15), family = "Rockwell" ),
+          axis.text.y = element_text(size = 18,  family = "Rockwell"),
+          axis.text.x = element_text(size = 18,  family = "Rockwell"),
+          axis.ticks.x = element_blank(),
+          legend.title = element_text(size = 20, face = "bold", family = "Rockwell"),
+          legend.text = element_text(size = 18,  family = "Rockwell"),
+          strip.text = element_text(face="bold", size = 14,  family = "Rockwell")))
 
 # annual values seem too high
 # max(df_join_select %>% filter(country == "England" & forest.stat == "creation.t.ha") %>% select(tot.t.ha), na.rm = TRUE)
