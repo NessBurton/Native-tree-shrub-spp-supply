@@ -495,4 +495,5 @@ df_join_select %>%
   #filter(forest.stat == "creation.t.ha") %>% 
   ggplot()+
   geom_point(aes(tot.t.ha,loss.t.ha, colour = forest.stat))+
-  geom_smooth(aes(tot.t.ha,loss.t.ha))
+  geom_smooth(aes(tot.t.ha,loss.t.ha, colour = forest.stat))+
+  theme_minimal()
