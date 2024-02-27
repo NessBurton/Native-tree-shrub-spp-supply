@@ -4,11 +4,9 @@ A space for analysis for the Creation topic within the State of Woods and Trees 
 
 ## Working topic title: Tree supply for thriving new woodland ecosystems
 
-### Research questions
+### Research question(s)
 
-1. Are we meeting targets, and how much is loss from P&D and extreme weather events compromising any gains from creation?
-
-2. What is the gap between 'ideal' tree species demand (based on regionally distinctive woodland communities and national creation targets) and current supply?
+1. What is the gap between 'ideal' tree species demand (based on regionally distinctive woodland communities and national creation targets) and current supply?
 
 ### Contact
 
