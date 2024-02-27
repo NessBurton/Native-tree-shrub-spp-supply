@@ -488,3 +488,11 @@ p6
 dev.off()
 
 # also add in lines to illustrate annual creation target per country? or do a separate plot for that
+
+### ewan's suggestion, plot loss against creation (and restock?)
+
+df_join_select %>% 
+  #filter(forest.stat == "creation.t.ha") %>% 
+  ggplot()+
+  geom_point(aes(tot.t.ha,loss.t.ha, colour = forest.stat))+
+  geom_smooth(aes(tot.t.ha,loss.t.ha))
