@@ -16,6 +16,7 @@ library(tidyverse)
 library(ggplot2)
 library(sf)
 library(terra)
+library(stars)
 library(stringr)
 library(magrittr)
 
@@ -171,6 +172,11 @@ ggplot()+
 ### assumption time!!! ---------------------------------------------------------
 
 ### is an LA appropriate for the species in question - make this y/n, depending on whether over 50% of the area is made up by an appropriateness code
+
+# species dataset needs to be a raster for this?
+rstHornbeam <- st_rasterize(hornbeam %>% dplyr::select(Code, geometry))
+
+plot(rstHornbeam)
 
 ### how much of the woodland opportunity area do we assume we use for creation?
 # could do a range e.g. 25%, 50%, 75%, 100%
