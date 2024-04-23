@@ -107,14 +107,34 @@ pat3 <-str_c(words3, collapse = "|")
 sfLA$LAD22NM <- sfLA$LAD22NM %>% str_remove_all(pat3) %>% trimws()
 
 # check again
-(issues <- dfOpportunity$local.authority[which(dfOpportunity$local.authority %in% sfLA$LAD22NM == FALSE)]) # these ones
+#(issues <- dfOpportunity$local.authority[which(dfOpportunity$local.authority %in% sfLA$LAD22NM == FALSE)]) # these ones
 # erg. close enough for now
 
 # join
 sfLA <- sfLA %>% mutate(LA = LAD22NM)
 dfOpportunity <- dfOpportunity %>% mutate(LA = local.authority)
 
-sfOpportunity <- merge(sfLA, dfOpportunity, by = "LA", all.x = TRUE)
+# catch issues found below before merging
+dfOpportunity$LA[which(dfOpportunity$local.authority == "Corby" |
+                                      dfOpportunity$local.authority == "East Northamptonshire"|
+                                      dfOpportunity$local.authority == "Kettering"|
+                                      dfOpportunity$local.authority == "Wellingborough")] <- "North Northamptonshire"
+
+dfOpportunity$LA[which(dfOpportunity$local.authority == "Northampton" |
+                                      dfOpportunity$local.authority == "Daventry"|
+                                      dfOpportunity$local.authority == "South Northamptonshire")] <- "West Northamptonshire"
+
+dfOpportunity$woodland.opportunity.ha[which(dfOpportunity$LA == "North Northamptonshire")]
+
+dfOpportunity$LA[which(dfOpportunity$local.authority == "St Helens")] <- "St. Helens"
+
+# dissolve so they're the same length
+dfOpportunity2 <- dfOpportunity %>%
+  group_by(LA) %>% 
+  summarise(area.ha = sum(area.ha),
+            woodland.opportunity.ha = sum(woodland.opportunity.ha))
+
+sfOpportunity <- merge(sfLA, dfOpportunity2, by = "LA", all.x = TRUE)
 
 # plot LAs
 ggplot()+
@@ -123,7 +143,10 @@ ggplot()+
   #labs(fill = "Appropriateness")+
   theme_minimal()
 
-# track down issues
-sfOpportunity %>% filter(is.na(woodland.opportunity.ha))
-
+# track down issues (fixed now)
+#sfOpportunity %>% filter(is.na(woodland.opportunity.ha))
+# City of London
+# North Northamptonshire
+# St. Helens
+# West Northamptonshire
 
