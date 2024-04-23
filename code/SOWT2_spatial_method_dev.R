@@ -16,7 +16,8 @@ library(tidyverse)
 library(ggplot2)
 library(sf)
 library(terra)
-#library(stars)
+library(stringr)
+library(magrittr)
 
 ### read in species shapefiles -------------------------------------------------
 
@@ -79,6 +80,15 @@ dfOpportunity$local.authority %in% sfLA$LAD22NM
 unique(dfOpportunity$local.authority)
 unique(sfLA$LAD22NM)
 # need to strip "district" and "B" from most the the dfOpportunity entries
+words <- c("[()]", "London Boro")
+pat <-str_c(words, collapse = "|")
+words2 <- c("District B", " B")
+pat2 <- str_c(words2, collapse = "|")
+dfOpportunity$local.authority %>%  str_remove_all(pat) %>% str_remove_all(pat2) %>% trimws()
+
+dfOpportunity$local.authority <- dfOpportunity$local.authority %>% str_remove_all(pat) %>% str_remove_all(pat2) %>% trimws()
+
+dfOpportunity$local.authority %in% sfLA$LAD22NM #  some still don't match
 
 # join
 
