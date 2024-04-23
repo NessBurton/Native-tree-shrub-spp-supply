@@ -114,7 +114,7 @@ sfLA$LAD22NM <- sfLA$LAD22NM %>% str_remove_all(pat3) %>% trimws()
 sfLA <- sfLA %>% mutate(LA = LAD22NM)
 dfOpportunity <- dfOpportunity %>% mutate(LA = local.authority)
 
-sfOpportunity <- merge(sfLA, dfOpportunity, by = "LA")
+sfOpportunity <- merge(sfLA, dfOpportunity, by = "LA", all.x = TRUE)
 
 # plot LAs
 ggplot()+
@@ -123,15 +123,7 @@ ggplot()+
   #labs(fill = "Appropriateness")+
   theme_minimal()
 
+# track down issues
+sfOpportunity %>% filter(is.na(woodland.opportunity.ha))
 
-### read in regions of provenance ----------------------------------------------
-
-RoP_poly <- st_read(paste0(dirData,"Forest_Reproductive_Materials_Regions_Of_Provenance_GB.shp"))
-
-summary(RoP_poly)
-
-ggplot()+
-  geom_sf(RoP_poly, mapping = aes(fill = as.factor(SEED_ZONES)))+
-  labs(fill = "Native seed zones")+
-  theme_minimal()
 
