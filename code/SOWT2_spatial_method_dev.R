@@ -8,7 +8,7 @@
 wd <- "C:/Users/vbu/OneDrive - the Woodland Trust/Projects/CO&E - SoWT2/Project-SoWT2" # WT laptop path
 dirData <- paste0(wd,"/data-raw/")
 dirScratch <- paste0(wd,"/data-scratch/")
-dirOut <- paste0(wd,"data-out")
+dirOut <- paste0(wd,"/data-out/")
 
 ### libraries ------------------------------------------------------------------
 
@@ -36,7 +36,8 @@ ggplot()+
   scale_fill_brewer(type = "seq", palette = 2)+
   labs(fill = "Appropriateness")+
   ggtitle(i)+
-  theme_minimal()
+  theme_minimal()+
+  geom_sf(sfOpportunity, mapping = aes(colour = woodland.opportunity.ha), fill = NA)
 
 # loop once data cleaned
 
@@ -60,7 +61,7 @@ for (i in lstSpecies){
 }
 
 
-### read in England creation target data ---------------------------------------
+### read in England creation target data and clean -----------------------------
 
 # woodland opportunity data from FoE https://friendsoftheearth.uk/nature/woodland-opportunity-local-authority-full-dataset 
 dfOpportunity <- read.csv(paste0(dirData,"Woodland_opportunity_by_local_authority_full_data.csv"))
@@ -149,4 +150,43 @@ ggplot()+
 # North Northamptonshire
 # St. Helens
 # West Northamptonshire
+
+# write as shapefile
+st_write(sfOpportunity, paste0(dirOut,"LA_woodland_opportunity_FoE.shp"))
+
+
+
+### plot with spp appropriateness for lols ----
+
+ggplot()+
+  geom_sf(hornbeam, mapping = aes(fill = Code), colour = NA)+
+  scale_fill_brewer(type = "seq", palette = 2)+
+  labs(fill = "Appropriateness")+
+  theme_minimal()+
+  geom_sf(sfOpportunity, mapping = aes(colour = woodland.opportunity.ha), fill = NA)+
+  #scale_fill_brewer(type = "seq", palette = "BuPu")+
+  labs(colour = "Woodland opportunity (ha)")
+
+
+### assumption time!!! ---------------------------------------------------------
+
+### is an LA appropriate for the species in question - make this y/n, depending on whether over 50% of the area is made up by an appropriateness code
+
+### how much of the woodland opportunity area do we assume we use for creation?
+# could do a range e.g. 25%, 50%, 75%, 100%
+
+### per species, estimate the proportion of any creation scheme it would make up - e.g. is it a major or minor component?
+# e.g. hornbeam = minor component of groves, major in OWH and glades
+
+### where the species is appropriate to the LA, estimate number of trees per ha this might equate to
+# think through an example
+# 100 ha opportunity area in an LA with max appropriateness for hornbeam
+# lets go with 25% this having actual creation - 25 ha
+# need to decide on a split between grove, OWH, glades
+# lets say 10ha grove, 10ha OWH, 5ha glades
+# decide on a density per each of these too
+# lets say 1100/ha grove, 100/ha OWH, 50 glades
+# and this won't be the only spp.
+
+
 
