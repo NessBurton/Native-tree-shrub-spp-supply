@@ -98,7 +98,7 @@ dfCreation_summary <- dfCreation_long %>%
                                            ifelse(Country == "UK", 33000, NA))))),
          Deficit = CCC - Achieved,
 # work out the deficit and what's been created as a percentage of the recommendation
-        Percentage = Achieved/CCC*100)
+        Percentage = round(Achieved/CCC*100, digits = 0))
 
 
 
@@ -111,7 +111,7 @@ dfCreation_summary <- dfCreation_long %>%
   scale_fill_viridis(discrete = T, option = "D") +
   scale_y_continuous(name = "Planting (ha/year)", limits = c(0, 38000), labels = scales::comma)+
   scale_x_discrete(name = "Region")+
-  #geom_text(aes(label = labs.av, y=lab.pos, x=cnt, vjust= -0.5))+
+  geom_text(aes(label = paste0(Percentage,"%"), y=CCC, x=Country, vjust= -0.5))+
   ggtitle("Average annual planting 2016-2024\ncompared to CCC reccomendations") +
   #theme_cowplot(12) +
   theme_pubr()+
