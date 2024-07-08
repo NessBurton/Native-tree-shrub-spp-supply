@@ -134,4 +134,9 @@ library(svglite)
 ggsave(plot = p1 , paste0(dirFigs,"creation_rates.svg"), width = 6, height = 4)
 
 
+# save data summary
+dfCreation_summary <- dfCreation_summary %>% 
+  mutate(upper = Achieved + SD,
+         lower = Achieved - SD)
 
+write.csv(dfCreation_summary, paste0(dirOut, "Creation_progress_summary_2024.csv"))
