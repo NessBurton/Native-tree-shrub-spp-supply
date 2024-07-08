@@ -105,12 +105,14 @@ dfCreation_summary <- dfCreation_long %>%
 
 (p1 <- dfCreation_summary %>% 
     gather(., Progress, Created_ha, c("Achieved", "Deficit"), factor_key = T) %>% 
-    mutate(Country = fct_relevel(Country, "England", "Northern Ireland", "Scotland", "Wales", "UK")) %>% 
+    mutate(Country = fct_relevel(Country, "England", "Northern Ireland", "Scotland", "Wales", "UK"),
+           upper = ifelse(Progress == "Achieved", Created_ha + SD, NA),
+           lower = ifelse(Progress == "Achieved", Created_ha - SD, NA)) %>% 
     ggplot()+
     geom_col(aes(x = Country, y = Created_ha, fill = Progress), colour = "black", position = position_stack(reverse = TRUE))+
     guides(fill = guide_legend(reverse = TRUE))+
     scale_fill_grey(start = 0.9, end = 0.2)+
-    #geom_errorbar(aes(x=Country, ymin = c(actual.av - actual.sd, rep(NA, length(actual.av))), ymax = c(actual.av + actual.sd, rep(NA, length(actual.av)))), width=.2) +
+    geom_errorbar(aes(x=Country, ymin = lower, ymax = upper, width=.2)) +    
     scale_y_continuous(name = "Planting (ha/year)", limits = c(0, 38000), labels = scales::comma)+
     scale_x_discrete(name = "Region")+
     geom_text(aes(label = paste0(Percentage,"%"), y=CCC, x=Country, vjust= -0.5))+
@@ -121,12 +123,15 @@ dfCreation_summary <- dfCreation_long %>%
         plot.subtitle = element_text(size = 12),
         legend.title = element_blank(),
         legend.text =  element_text(size = 12),
-        axis.text.x = element_text(size = 12),
+        axis.text.x = element_text(size = 12, angle = 90),
         axis.text.y = element_text(size = 10),
         axis.title.y =  element_text(size = 12, vjust = 2.2 ),
         axis.title.x =  element_blank(),
         legend.position = "right"))
 
-ggsave(plot = p1 , paste0(dirFigs,"creation_rates.jpg"), width = 6, height = 3)
+ggsave(plot = p1 , paste0(dirFigs,"creation_rates.jpg"), width = 6, height = 4)
 library(svglite)
-ggsave(plot = p1 , paste0(dirFigs,"creation_rates.svg"), width = 6, height = 3)
+ggsave(plot = p1 , paste0(dirFigs,"creation_rates.svg"), width = 6, height = 4)
+
+
+
